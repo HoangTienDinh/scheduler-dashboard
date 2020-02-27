@@ -28,19 +28,25 @@ const data = [
   }
 ];
 
-
-
 class Dashboard extends Component {
   state = { 
     loading: false,
     focused: null 
   };
 
+  // The binding of 'this' here is not dynamic, so will not work.  The binding is not dynamic; it is is based on where the function is declared.  Only if we pass an arrow function within the prop, will an instance method like this work.
   selectPanel(id) {
-    this.setState({
-     focused: id
-    });
+    this.setState(previousState => ({
+     focused: previousState.focused !== null ? null : id
+    }));
    }
+
+  // It must be an arrow function because of how they handle this context. Arrow functions are designed to alter this behaviour in a specific way.
+  //  selectPanel = id => {
+  //    this.setState({
+  //      focused: id
+  //    });
+  //  };
 
   render() {
     const dashboardClasses = classnames("dashboard", {
@@ -61,6 +67,7 @@ class Dashboard extends Component {
         id={panel.id}
         label={panel.label}
         value={panel.value}
+        onSelect={() => this.selectPanel(panel.id)}
       />
     ));
 
